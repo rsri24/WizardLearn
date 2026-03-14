@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WizardLearn — 11+ Magic Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & ROOT ===== */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --purple:#6c3aed;--purple2:#9333ea;--purple3:#c084fc;
+  --gold:#f59e0b;--gold2:#fbbf24;--gold3:#fef3c7;
+  --green:#10b981;--green2:#34d399;--green3:#d1fae5;
+  --blue:#3b82f6;--blue2:#60a5fa;--blue3:#dbeafe;
+  --red:#ef4444;--red2:#f87171;--pink:#ec4899;--pink2:#f9a8d4;
+  --orange:#f97316;--teal:#0d9488;
+  --dark:#0f0a1e;--dark2:#1a1035;--dark3:#251848;
+  --card:#fff;--card2:#f8f5ff;--card3:#f0ebff;
+  --text:#1a0a40;--text2:#5a4a8a;--text3:#9987c4;
+  --border:#e0d8ff;
+  --font:'Nunito',sans-serif;--font-display:'Fredoka One',cursive;
+  --r:16px;--r2:12px;--r3:24px;
+  --shadow:0 4px 20px rgba(108,58,237,.15);
+  --shadow2:0 8px 32px rgba(108,58,237,.25);
+}
+html,body{height:100%;overflow:hidden;background:var(--dark);font-family:var(--font)}
+
+/* ===== APP SHELL ===== */
+#app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative;max-width:430px;margin:0 auto;background:var(--dark)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+.screen.active{opacity:1;pointer-events:all;transform:none!important}
+.screen.slide-in{transform:translateX(100%)}
+.screen.slide-in-left{transform:translateX(-100%)}
+
+/* ===== MAGIC BACKGROUND ===== */
+.magic-bg{
+  background:linear-gradient(160deg,#0f0a1e 0%,#1a1035 40%,#251848 70%,#3b1f6e 100%);
+  position:relative;overflow:hidden;
+}
+.magic-bg::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(139,92,246,.25) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 80%,rgba(245,158,11,.15) 0%,transparent 50%),
+             radial-gradient(ellipse at 60% 10%,rgba(236,72,153,.12) 0%,transparent 40%);
+  pointer-events:none;
+}
+.stars-canvas{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.shooting-star{position:absolute;width:100px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);border-radius:2px;animation:shoot 4s ease-in-out infinite;top:20%;left:-100px}
+@keyframes shoot{0%{transform:translateX(0) rotate(-15deg);opacity:0}10%{opacity:1}80%{opacity:1}100%{transform:translateX(600px) rotate(-15deg);opacity:0}}
+
+/* ===== SCROLLABLE BODY ===== */
+.scroll-body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px}
+.scroll-body::-webkit-scrollbar{width:4px}
+.scroll-body::-webkit-scrollbar-thumb{background:rgba(108,58,237,.3);border-radius:2px}
+
+/* ===== HEADER ===== */
+.header{padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative;z-index:10}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.back-btn:hover{background:rgba(255,255,255,.2)}
+.header-title{flex:1;text-align:center;font-family:var(--font-display);font-size:20px;color:#fff;letter-spacing:.5px}
+.header-right{width:36px}
+
+/* ===== BUTTONS ===== */
+.btn{width:100%;padding:15px;border-radius:14px;border:none;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;font-family:var(--font);letter-spacing:.3px}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,#6c3aed,#9333ea);color:#fff;box-shadow:0 6px 24px rgba(108,58,237,.5)}
+.btn-primary:hover{box-shadow:0 8px 32px rgba(108,58,237,.6);transform:translateY(-1px)}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;box-shadow:0 6px 24px rgba(245,158,11,.45)}
+.btn-gold:hover{box-shadow:0 8px 32px rgba(245,158,11,.55);transform:translateY(-1px)}
+.btn-green{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 6px 24px rgba(16,185,129,.4)}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);backdrop-filter:blur(10px)}
+.btn-ghost:hover{background:rgba(255,255,255,.2)}
+.btn-outline{background:var(--card3);color:var(--purple);border:2px solid var(--purple3);font-weight:700}
+.btn-sm{width:auto;padding:9px 18px;font-size:13px;border-radius:10px}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#f97316);color:#fff}
+
+/* ===== CARDS ===== */
+.card{background:var(--card);border-radius:var(--r);padding:16px;border:1.5px solid var(--border);margin-bottom:12px;box-shadow:var(--shadow)}
+.card-dark{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:16px;margin-bottom:12px;backdrop-filter:blur(10px)}
+.card-glow{box-shadow:0 0 0 2px var(--purple3),var(--shadow2)}
+
+/* ===== INPUTS ===== */
+.input{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:#fff;color:var(--text);outline:none;font-family:var(--font);transition:.2s}
+.input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(108,58,237,.12)}
+.label{font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+select.input{cursor:pointer}
+
+/* ===== PROGRESS ===== */
+.prog-track{height:10px;background:var(--border);border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.prog-purple{background:linear-gradient(90deg,var(--purple),var(--purple2))}
+.prog-gold{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.prog-green{background:linear-gradient(90deg,var(--green),var(--green2))}
+.prog-red{background:linear-gradient(90deg,var(--red),var(--orange))}
+.prog-blue{background:linear-gradient(90deg,var(--blue),var(--blue2))}
+
+/* ===== BADGES ===== */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:var(--font)}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.badge-gold{background:#fef3c7;color:#92400e}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-pink{background:#fce7f3;color:#9d174d}
+
+/* ===== TAB BAR ===== */
+.tab-bar{display:flex;background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;padding:6px 4px 10px}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;padding:6px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);border-radius:10px;transition:.2s;font-family:var(--font)}
+.tab-btn.active{color:var(--gold2);background:rgba(245,158,11,.12)}
+.tab-btn .tab-icon{font-size:22px;line-height:1}
+
+/* ===== AVATAR GRID ===== */
+.avatar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.avatar-item{background:rgba(255,255,255,.06);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.avatar-item:hover{border-color:var(--purple3);background:rgba(108,58,237,.15)}
+.avatar-item.selected{border-color:var(--gold);background:rgba(245,158,11,.15);box-shadow:0 0 0 1px var(--gold),0 4px 20px rgba(245,158,11,.3)}
+.avatar-emoji{font-size:40px;display:block;margin-bottom:6px}
+.avatar-name{font-size:12px;color:rgba(255,255,255,.7);font-weight:700}
+
+/* ===== SUBJECT CARDS ===== */
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.subj-card{border-radius:18px;padding:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;border:2px solid transparent}
+.subj-card:hover{transform:translateY(-3px)}
+.subj-card:active{transform:scale(.97)}
+.subj-card .subj-emoji{font-size:36px;margin-bottom:8px;display:block}
+.subj-card .subj-name{font-size:14px;font-weight:800;margin-bottom:2px}
+.subj-card .subj-sub{font-size:11px;opacity:.75;font-weight:600}
+.s-maths{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#78350f;border-color:#fde68a}
+.s-english{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e3a8a;border-color:#bfdbfe}
+.s-verbal{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#064e3b;border-color:#a7f3d0}
+.s-nonverbal{background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#831843;border-color:#fbcfe8}
+
+/* ===== QUESTION SCREEN ===== */
+.qa-option{width:100%;text-align:left;padding:14px 16px;border:2px solid var(--border);border-radius:14px;background:var(--card);cursor:pointer;font-size:14px;font-weight:700;margin-bottom:10px;transition:all .2s;color:var(--text);font-family:var(--font);display:flex;align-items:center;gap:10px}
+.qa-option .opt-letter{width:28px;height:28px;border-radius:50%;background:var(--card3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--purple);flex-shrink:0}
+.qa-option:hover:not(:disabled){border-color:var(--purple);background:var(--card3);transform:translateX(3px)}
+.qa-option.correct{border-color:var(--green);background:var(--green3);animation:correctPulse .4s ease}
+.qa-option.correct .opt-letter{background:var(--green);color:#fff}
+.qa-option.wrong{border-color:var(--red);background:#fee2e2}
+.qa-option.wrong .opt-letter{background:var(--red);color:#fff}
+@keyframes correctPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+/* ===== OTP BOXES ===== */
+.otp-boxes{display:flex;gap:8px;justify-content:center;margin:20px 0}
+.otp-box{width:50px;height:60px;border:2px solid var(--border);border-radius:12px;font-size:24px;font-weight:900;text-align:center;background:#fff;color:var(--purple);outline:none;font-family:var(--font-display);transition:.2s}
+.otp-box:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(108,58,237,.15)}
+
+/* ===== LEADERBOARD ===== */
+.lb-row{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);transition:.2s}
+.lb-row.me{background:rgba(108,58,237,.2);border-color:var(--purple3)}
+.lb-row:hover{background:rgba(255,255,255,.08)}
+.rank{font-size:15px;font-weight:900;width:28px;text-align:center;color:rgba(255,255,255,.5)}
+.rank.gold{color:var(--gold)}
+.rank.silver{color:#94a3b8}
+.rank.bronze{color:#c07a3c}
+
+/* ===== CHAPTER ROWS ===== */
+.chapter-row{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.05);margin-bottom:8px;cursor:pointer;border:1.5px solid rgba(255,255,255,.06);transition:all .2s}
+.chapter-row:hover{background:rgba(255,255,255,.1);border-color:rgba(108,58,237,.4)}
+.chapter-row.active{background:rgba(108,58,237,.15);border-color:var(--purple3)}
+
+/* ===== SCORE BAR ===== */
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.score-label{font-size:12px;color:var(--text2);width:95px;flex-shrink:0;font-weight:700}
+.score-pct{font-size:13px;font-weight:800;width:38px;text-align:right}
+
+/* ===== GRAMMAR CARDS ===== */
+.grammar-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.grammar-card:hover{background:rgba(108,58,237,.15);border-color:var(--purple3);transform:translateX(4px)}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(108,58,237,.2);color:var(--purple3);margin:2px}
+
+/* ===== CELEBRATIONS ===== */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:9999}
+.celebration-overlay{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);animation:fadeInOverlay .3s ease}
+@keyframes fadeInOverlay{from{opacity:0}to{opacity:1}}
+.celebration-box{background:linear-gradient(135deg,#1a1035,#251848);border:2px solid var(--gold);border-radius:28px;padding:32px 24px;text-align:center;max-width:340px;width:90%;animation:bounceIn .5s cubic-bezier(.68,-.55,.27,1.55)}
+@keyframes bounceIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.xp-float{position:fixed;font-size:20px;font-weight:900;color:var(--gold);pointer-events:none;z-index:9997;animation:floatUp 1.5s ease forwards;font-family:var(--font-display)}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(1.3)}}
+.streak-flame{animation:flameWiggle .5s ease-in-out infinite alternate}
+@keyframes flameWiggle{0%{transform:rotate(-8deg) scale(1)}100%{transform:rotate(8deg) scale(1.1)}}
+
+/* ===== PARENT TAB BAR ===== */
+.p-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.p-tab{flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;color:rgba(255,255,255,.4);font-family:var(--font);transition:.2s}
+.p-tab.active{color:var(--gold);border-color:var(--gold)}
+
+/* ===== CHARTS ===== */
+.chart-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar-col{width:32px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--purple2),var(--purple));transition:height .8s cubic-bezier(.4,0,.2,1);min-height:4px}
+.chart-label{font-size:10px;color:rgba(255,255,255,.5);font-weight:700;text-align:center}
+
+/* ===== MISC ===== */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;border:1.5px solid;font-family:var(--font)}
+.chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.chip.inactive{background:transparent;color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2)}
+.level-dots{display:flex;gap:5px}
+.level-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15)}
+.level-dot.done{background:var(--green)}
+.level-dot.active{background:var(--gold)}
+.mode-card{border-radius:18px;padding:16px;cursor:pointer;transition:all .25s;border:2px solid transparent;display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.mode-card:hover{transform:translateY(-2px)}
+.mode-card:active{transform:scale(.98)}
+.mode-icon{font-size:40px;flex-shrink:0}
+.hint-box{background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;margin-top:10px;display:none}
+
+/* ===== REWARD STREAK ===== */
+.streak-days{display:flex;gap:6px;justify-content:center}
+.streak-day{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);font-weight:900;font-family:var(--font)}
+.streak-day.done{background:rgba(245,158,11,.2);border-color:var(--gold)}
+.streak-day.today{background:var(--gold);border-color:var(--gold2);box-shadow:0 4px 16px rgba(245,158,11,.5)}
+
+/* ===== PROFILE STAT ===== */
+.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;text-align:center}
+.stat-val{font-size:22px;font-weight:900;font-family:var(--font-display)}
+.stat-label{font-size:10px;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ===== WIZARD XP BAR ===== */
+.xp-bar-wrap{background:rgba(255,255,255,.1);border-radius:20px;padding:3px 3px 3px 12px;display:flex;align-items:center;gap:8px}
+.xp-bar-track{flex:1;height:12px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:6px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(108,58,237,.3)}50%{box-shadow:0 0 40px rgba(108,58,237,.6)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+.animate-up{animation:slideUp .4s ease forwards}
+.animate-pop{animation:popIn .3s cubic-bezier(.68,-.55,.27,1.55) forwards}
+.shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);background-size:200% 100%;animation:shimmer 2s infinite}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(108,58,237,.4);border-radius:2px}
+
+/* ===== MAGIC PARTICLES ===== */
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:particleFly var(--d,4s) ease-in-out infinite var(--delay,0s)}
+@keyframes particleFly{0%,100%{transform:translateY(0) scale(1);opacity:.6}50%{transform:translateY(-20px) scale(1.2);opacity:1}}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="app">
+
+<!-- =============================== SCREEN: LANDING =============================== -->
+<div class="screen active magic-bg" id="s-landing">
+  <div class="stars-canvas" id="landing-stars"></div>
+  <div class="shooting-star"></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;position:relative;z-index:1">
+    <div style="animation:popIn .6s .1s both">
+      <div style="font-size:88px;line-height:1;margin-bottom:4px;filter:drop-shadow(0 8px 24px rgba(245,158,11,.5))">🧙</div>
+      <div style="font-family:var(--font-display);font-size:38px;color:#fff;margin-bottom:4px;text-shadow:0 2px 20px rgba(108,58,237,.8)">WizardLearn</div>
+      <div style="font-size:14px;color:var(--purple3);font-weight:700;margin-bottom:16px;letter-spacing:.5px">11+ MAGIC ACADEMY</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;animation:slideUp .5s .3s both">
+      <span style="background:rgba(108,58,237,.3);color:#c4b5fd;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(108,58,237,.4)">🔢 Maths</span>
+      <span style="background:rgba(59,130,246,.3);color:#93c5fd;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(59,130,246,.4)">📖 English</span>
+      <span style="background:rgba(16,185,129,.3);color:#6ee7b7;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(16,185,129,.4)">💬 Verbal</span>
+      <span style="background:rgba(236,72,153,.3);color:#f9a8d4;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(236,72,153,.4)">🔷 Non-Verbal</span>
+    </div>
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 20px;margin-bottom:28px;animation:slideUp .5s .4s both;backdrop-filter:blur(10px)">
+      <div style="font-size:12px;color:rgba(255,255,255,.8);font-weight:700;margin-bottom:6px">🏰 Supporting All Major UK 11+ Exams</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5)">Kent · CSSE · Sutton · Bexley · Bucks · Birmingham · Trafford · Devon · London</div>
+    </div>
+    <div style="width:100%;animation:slideUp .5s .5s both">
+      <button class="btn btn-gold" style="margin-bottom:10px;font-size:17px;padding:16px" onclick="goTo('s-signup')">✨ Start Your Magic Quest!</button>
+      <button class="btn btn-ghost" onclick="goTo('s-login')">🔐 Already a Wizard? Login</button>
+      <div style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.4)">Parent? <span style="color:var(--purple3);cursor:pointer;font-weight:700" onclick="goTo('s-parent')">View Parent Dashboard →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: SIGN UP =============================== -->
+<div class="screen magic-bg slide-in" id="s-signup">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Create Account</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:56px">🧙‍♂️</div>
+      <div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:4px">Join thousands of young wizards!</div>
+    </div>
+    <div class="label" style="color:rgba(255,255,255,.5)">Email Address</div>
+    <input class="input" type="email" placeholder="parent@email.com" id="su-email" style="margin-bottom:12px">
+    <div class="label" style="color:rgba(255,255,255,.5)">Child's Age</div>
+    <input class="input" type="number" placeholder="e.g. 9" min="7" max="12" id="su-age" style="margin-bottom:12px">
+    <div class="label" style="color:rgba(255,255,255,.5)">School Year / Class</div>
+    <input class="input" type="text" placeholder="e.g. Year 5" id="su-class" style="margin-bottom:12px">
+    <div class="label" style="color:rgba(255,255,255,.5)">I am a...</div>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="chip active" onclick="selectChip(this,'role')" data-val="parent">👨‍👩‍👧 Parent</div>
+      <div class="chip inactive" onclick="selectChip(this,'role')" data-val="child">🎓 Child</div>
+    </div>
+    <div class="label" style="color:rgba(255,255,255,.5)">Target Grammar School</div>
+    <select class="input" id="su-school" style="margin-bottom:20px">
+      <option value="">Select your target exam...</option>
+      <option>Kent Test (GL Assessment)</option>
+      <option>CSSE Essex</option>
+      <option>Sutton SET</option>
+      <option>Bexley Test</option>
+      <option>Buckinghamshire 11+</option>
+      <option>Warwickshire 11+</option>
+      <option>Birmingham / West Midlands</option>
+      <option>Trafford 11+</option>
+      <option>Devon 11+</option>
+      <option>London Consortium</option>
+    </select>
+    <button class="btn btn-primary" style="margin-bottom:10px" onclick="doSignup()">📱 Send Magic Code</button>
+    <button class="btn btn-ghost" onclick="goTo('s-login')">Already have an account?</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: OTP =============================== -->
+<div class="screen magic-bg slide-in" id="s-otp">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Magic Code</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body" style="text-align:center">
+    <div style="font-size:64px;margin:20px 0;animation:popIn .5s ease">📬</div>
+    <div style="font-size:18px;font-weight:800;color:#fff;margin-bottom:6px">Check your email!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:4px">We sent a 6-digit magic code to</div>
+    <div style="font-size:14px;color:var(--gold);font-weight:700;margin-bottom:24px" id="otp-email">parent@email.com</div>
+    <div class="otp-boxes" id="otp-boxes">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,0)">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,1)">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,2)">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,3)">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,4)">
+      <input class="otp-box" maxlength="1" oninput="otpMove(this,5)">
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px">Resend code in <span id="otp-timer" style="color:var(--gold);font-weight:700">00:59</span></div>
+    <div style="font-size:13px;color:var(--purple3);cursor:pointer;font-weight:700" onclick="goTo('s-avatar')">Use demo code: 123456 →</div>
+  </div>
+  <div style="padding:16px 20px;flex-shrink:0">
+    <button class="btn btn-primary" onclick="verifyOtp()">✅ Verify & Enter Academy!</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: AVATAR =============================== -->
+<div class="screen magic-bg slide-in" id="s-avatar">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Choose Your Wizard</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:16px;font-weight:600">Pick your magical companion for this adventure!</div>
+    <div class="avatar-grid">
+      <div class="avatar-item selected" onclick="selectAvatar(this,'Merlin')"><span class="avatar-emoji">🧙‍♂️</span><span class="avatar-name">Merlin</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Mystara')"><span class="avatar-emoji">🧙‍♀️</span><span class="avatar-name">Mystara</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Hootley')"><span class="avatar-emoji">🦉</span><span class="avatar-name">Hootley</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Draco')"><span class="avatar-emoji">🐉</span><span class="avatar-name">Draco</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Sparkle')"><span class="avatar-emoji">🦄</span><span class="avatar-name">Sparkle</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Elara')"><span class="avatar-emoji">🧝‍♀️</span><span class="avatar-name">Elara</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Foxington')"><span class="avatar-emoji">🦊</span><span class="avatar-name">Foxington</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Wolfric')"><span class="avatar-emoji">🐺</span><span class="avatar-name">Wolfric</span></div>
+      <div class="avatar-item" onclick="selectAvatar(this,'Luna')"><span class="avatar-emoji">🦋</span><span class="avatar-name">Luna</span></div>
+    </div>
+    <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;margin-top:16px;text-align:center">
+      <div style="font-size:12px;color:rgba(255,255,255,.6)">🎁 Each wizard unlocks a unique <span style="color:var(--gold);font-weight:700">Magic Spellbook</span> of rewards!</div>
+    </div>
+  </div>
+  <div style="padding:16px 20px;flex-shrink:0">
+    <button class="btn btn-gold" onclick="goTo('s-onboard')">🪄 Let the Magic Begin!</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: LOGIN =============================== -->
+<div class="screen magic-bg slide-in" id="s-login">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Welcome Back!</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body" style="text-align:center">
+    <div style="font-size:72px;margin:24px 0 16px;animation:popIn .5s ease">🧙</div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px">Great to see you again!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:28px">Enter your email — we'll send a magic code</div>
+    <div class="label" style="text-align:left;color:rgba(255,255,255,.5)">Email Address</div>
+    <input class="input" type="email" placeholder="your@email.com" id="login-email" style="margin-bottom:16px">
+    <div style="background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.3);border-radius:12px;padding:12px 16px;text-align:left;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:700;color:var(--gold)">🔒 Passwordless Magic Login</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">No password to remember — safe, quick, magical!</div>
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">✉️ Send Magic Code</button>
+    <div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,.4)">New wizard? <span style="color:var(--purple3);cursor:pointer;font-weight:700" onclick="goTo('s-signup')">Create account →</span></div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: ONBOARDING =============================== -->
+<div class="screen magic-bg slide-in" id="s-onboard">
+  <div class="header">
+    <div style="width:36px"></div>
+    <div class="header-title">Welcome, <span id="onboard-name">Merlin</span>! ✨</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body" style="text-align:center">
+    <div style="font-size:72px;margin:8px 0;animation:popIn .5s ease">🏰</div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px">Welcome to WizardLearn Academy!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:24px">How would you like to start your quest?</div>
+    <div class="card-dark" style="cursor:pointer;border-color:rgba(108,58,237,.4)" onclick="goTo('s-testintro')">
+      <div style="font-size:48px;margin-bottom:8px">🔮</div>
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px">Take Placement Test</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px">Find your magic level — we'll personalise everything for you</div>
+      <span class="badge badge-gold">⭐ Recommended</span>
+    </div>
+    <div class="card-dark" style="cursor:pointer" onclick="goTo('s-dashboard')">
+      <div style="font-size:48px;margin-bottom:8px">⚡</div>
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px">Jump Straight In</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5)">Start practice immediately — take the test later</div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: TEST INTRO =============================== -->
+<div class="screen magic-bg slide-in" id="s-testintro">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Placement Test</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body" style="text-align:center">
+    <div style="font-size:72px;margin:8px 0;animation:popIn .5s ease;filter:drop-shadow(0 4px 20px rgba(108,58,237,.6))">🔮</div>
+    <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:6px">Discover Your Magic Level</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px">A quick adaptive test across all subjects</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div class="stat-box"><div class="stat-val" style="color:var(--purple3)">20</div><div class="stat-label">Questions</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--gold)">25</div><div class="stat-label">Minutes</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--green2)">4</div><div class="stat-label">Subjects</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--pink)">5</div><div class="stat-label">Levels</div></div>
+    </div>
+    <div class="card-dark" style="margin-bottom:16px">
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px;font-weight:700">🎵 BACKGROUND MUSIC</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:rgba(108,58,237,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px" id="music-btn" onclick="toggleMusic()">🎵</div>
+        <div style="text-align:left">
+          <div style="font-size:13px;font-weight:700;color:#fff">Wizard's Study</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4)">Calm focus music — great for concentration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:16px 20px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
+    <button class="btn btn-gold" onclick="startTest()">⚡ Start Placement Test</button>
+    <button class="btn btn-ghost" onclick="goTo('s-dashboard')">Skip for now</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: QUESTION =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-question">
+  <div style="background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:12px 16px;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <button class="back-btn" style="width:32px;height:32px;font-size:16px" onclick="goBack()">←</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="q-badge" class="badge badge-blue">Verbal Reasoning</span>
+        <span class="badge badge-purple" id="q-level">Level 2</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(245,158,11,.15);padding:5px 10px;border-radius:20px;border:1px solid rgba(245,158,11,.3)">
+        <span style="font-size:14px">⏱</span>
+        <span style="font-size:13px;font-weight:800;color:var(--gold)" id="q-timer">22:00</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <span style="font-size:12px;color:rgba(255,255,255,.5);font-weight:700">Question <span id="q-num">1</span> of <span id="q-total">10</span></span>
+      <span style="font-size:12px;color:var(--gold);font-weight:700" id="q-xp-label">+15 XP</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill prog-purple" id="q-progress" style="width:10%"></div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="card" style="margin-bottom:14px;border-color:rgba(108,58,237,.3);background:rgba(255,255,255,.97)">
+      <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px">QUESTION <span id="q-num2">1</span></div>
+      <div id="q-text" style="font-size:15px;line-height:1.7;color:var(--text);font-weight:600"></div>
+    </div>
+    <div id="q-options"></div>
+    <div class="hint-box" id="q-hint">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">💡 Magic Hint</div>
+      <div id="q-hint-text" style="font-size:12px;color:rgba(255,255,255,.8)"></div>
+    </div>
+    <div id="q-feedback" style="display:none;border-radius:12px;padding:12px;margin-top:10px"></div>
+  </div>
+  <div style="padding:12px 16px;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" style="flex:0 0 auto" onclick="showHint()">💡 Hint</button>
+      <button class="btn btn-primary" id="q-next-btn" onclick="nextQuestion()" style="flex:1;display:none">Next →</button>
+      <div id="q-placeholder" style="flex:1;font-size:12px;color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:600">Choose your answer above</div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: TEST RESULT =============================== -->
+<div class="screen magic-bg slide-in" id="s-testresult">
+  <div class="header">
+    <div style="width:36px"></div>
+    <div class="header-title">Your Results! 🎉</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body" style="text-align:center">
+    <div style="font-size:80px;margin-bottom:8px;animation:bounceIn .6s ease" id="result-emoji">🏆</div>
+    <div style="font-family:var(--font-display);font-size:28px;color:var(--gold);margin-bottom:4px" id="result-level">Level 3 Wizard!</div>
+    <div style="font-size:24px;margin-bottom:6px" id="result-stars">★★★☆☆</div>
+    <span class="badge badge-gold" id="result-badge" style="margin-bottom:20px;display:inline-block;font-size:13px;padding:6px 16px">Apprentice Sorcerer</span>
+    <div class="card" style="text-align:left;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:800;margin-bottom:14px;color:var(--text)">📊 Subject Scores</div>
+      <div class="score-row"><span class="score-label">🔢 Maths</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-gold" id="res-maths" style="width:0%"></div></div><span class="score-pct" style="color:var(--gold)" id="res-maths-txt">72%</span></div>
+      <div class="score-row"><span class="score-label">📖 English</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-blue" id="res-english" style="width:0%"></div></div><span class="score-pct" style="color:var(--blue)" id="res-english-txt">85%</span></div>
+      <div class="score-row"><span class="score-label">💬 Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-green" id="res-verbal" style="width:0%"></div></div><span class="score-pct" style="color:var(--green)" id="res-verbal-txt">68%</span></div>
+      <div class="score-row"><span class="score-label">🔷 Non-Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-red" id="res-nv" style="width:0%"></div></div><span class="score-pct" style="color:var(--red)" id="res-nv-txt">55%</span></div>
+    </div>
+    <div style="background:rgba(245,158,11,.1);border:1.5px solid rgba(245,158,11,.3);border-radius:14px;padding:14px;text-align:left;margin-bottom:16px">
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px">🎯 YOUR FOCUS AREA</div>
+      <div style="font-size:14px;font-weight:800;color:var(--gold)">Non-Verbal Reasoning needs most work!</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:4px">We'll give you extra practice in patterns & sequences</div>
+    </div>
+  </div>
+  <div style="padding:16px 20px;flex-shrink:0">
+    <button class="btn btn-gold" onclick="goTo('s-dashboard');launchConfetti()">🏰 Enter the Academy!</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: DASHBOARD =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-dashboard">
+  <div style="background:linear-gradient(160deg,#1a1035 0%,#2d1060 100%);padding:16px;flex-shrink:0;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(245,158,11,.1) 0%,transparent 60%);pointer-events:none"></div>
+    <div style="display:flex;align-items:center;gap:12px;position:relative">
+      <div style="font-size:44px;filter:drop-shadow(0 4px 12px rgba(245,158,11,.4))" id="dash-avatar">🧙‍♂️</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:#fff">Hi, <span id="dash-name">Merlin</span>! ✨</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px">Level <span id="dash-level">3</span> Wizard · <span id="dash-xp">1,240</span> XP</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span style="font-size:14px" class="streak-flame">🔥</span>
+          <span style="font-size:12px;font-weight:700;color:var(--gold)" id="dash-streak">7 day streak!</span>
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:8px 12px;text-align:center;cursor:pointer" onclick="goTo('s-leaderboard')">
+        <div style="font-size:18px;font-weight:900;color:var(--gold)">🏅 #42</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700">RANK</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;position:relative">
+      <div class="xp-bar-wrap">
+        <span style="font-size:11px;color:rgba(255,255,255,.5);font-weight:700;white-space:nowrap">1,240</span>
+        <div class="xp-bar-track"><div class="xp-bar-fill" style="width:83%"></div></div>
+        <span style="font-size:11px;color:var(--gold);font-weight:700;white-space:nowrap">1,500 ⚡</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <!-- Streak row -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">🔥 Weekly Streak</div>
+      <div class="streak-days">
+        <div class="streak-day done">M</div>
+        <div class="streak-day done">T</div>
+        <div class="streak-day done">W</div>
+        <div class="streak-day done">T</div>
+        <div class="streak-day done">F</div>
+        <div class="streak-day done">S</div>
+        <div class="streak-day today">S</div>
+      </div>
+    </div>
+    <!-- 3 Main Quest Modes -->
+    <div style="font-size:12px;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">⚔️ Choose Your Quest</div>
+    <div class="mode-card" style="background:linear-gradient(135deg,rgba(108,58,237,.2),rgba(147,51,234,.15));border-color:rgba(108,58,237,.4)" onclick="goTo('s-subjects')">
+      <div class="mode-icon">⚡</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:#fff">General Practice</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">Maths · English · Verbal · Non-Verbal</div>
+        <div style="font-size:11px;color:var(--green2);margin-top:4px;font-weight:700">🤖 ∞ Unlimited AI Questions</div>
+      </div>
+      <div style="font-size:20px;color:rgba(255,255,255,.4)">→</div>
+    </div>
+    <div class="mode-card" style="background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(251,191,36,.1));border-color:rgba(245,158,11,.35)" onclick="goTo('s-grammar')">
+      <div class="mode-icon">🏰</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:#fff">Grammar School Prep</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">Kent · CSSE · Sutton · Bexley & more</div>
+        <div style="font-size:11px;color:var(--gold);margin-top:4px;font-weight:700">📋 Real exam-style questions</div>
+      </div>
+      <div style="font-size:20px;color:rgba(255,255,255,.4)">→</div>
+    </div>
+    <div class="mode-card" style="background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(96,165,250,.1));border-color:rgba(59,130,246,.35)" onclick="goTo('s-mocktests')">
+      <div class="mode-icon">📋</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:800;color:#fff">Mock Tests</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">Full timed papers · Instant scoring</div>
+        <div style="font-size:11px;color:var(--blue2);margin-top:4px;font-weight:700">⏰ Next: Kent Test Mock — Sunday</div>
+      </div>
+      <div style="font-size:20px;color:rgba(255,255,255,.4)">→</div>
+    </div>
+    <!-- Quick stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="stat-box" style="cursor:pointer" onclick="goTo('s-leaderboard')"><div class="stat-val" style="color:var(--gold)">🏆 #42</div><div class="stat-label">Class Rank</div></div>
+      <div class="stat-box" style="cursor:pointer" onclick="goTo('s-analytics')"><div class="stat-val" style="color:var(--green2)">84%</div><div class="stat-label">Accuracy</div></div>
+    </div>
+    <!-- Recent rewards -->
+    <div style="font-size:12px;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">🏅 Recent Rewards</div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">
+      <div style="flex-shrink:0;text-align:center;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:14px;padding:12px;min-width:70px;cursor:pointer" onclick="showRewardDetail('⭐','Star Pupil','Answered 50 questions correctly in a row!')">
+        <div style="font-size:32px">⭐</div><div style="font-size:10px;color:var(--gold);font-weight:700;margin-top:4px">Star Pupil</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:14px;padding:12px;min-width:70px;cursor:pointer" onclick="showRewardDetail('🔥','7 Day Streak','You\'ve practised 7 days in a row! Amazing dedication!')">
+        <div style="font-size:32px">🔥</div><div style="font-size:10px;color:var(--red2);font-weight:700;margin-top:4px">7 Streak</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:12px;min-width:70px;cursor:pointer" onclick="showRewardDetail('💎','Maths Pro','Scored 90%+ in Maths 3 times!')">
+        <div style="font-size:32px">💎</div><div style="font-size:10px;color:var(--blue2);font-weight:700;margin-top:4px">Maths Pro</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.3);border-radius:14px;padding:12px;min-width:70px;cursor:pointer" onclick="showRewardDetail('🧩','NVR Ninja','Mastered Non-Verbal Reasoning Level 1!')">
+        <div style="font-size:32px">🧩</div><div style="font-size:10px;color:var(--pink);font-weight:700;margin-top:4px">NVR Ninja</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:12px;min-width:70px;cursor:pointer" onclick="showRewardDetail('📚','Bookworm','Read 20 English comprehension passages!')">
+        <div style="font-size:32px">📚</div><div style="font-size:10px;color:var(--green2);font-weight:700;margin-top:4px">Bookworm</div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="goTo('s-dashboard')"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn" onclick="goTo('s-subjects')"><span class="tab-icon">📚</span>Practice</button>
+    <button class="tab-btn" onclick="goTo('s-leaderboard')"><span class="tab-icon">🏆</span>Ranks</button>
+    <button class="tab-btn" onclick="goTo('s-analytics')"><span class="tab-icon">📈</span>Progress</button>
+    <button class="tab-btn" onclick="goTo('s-parent')"><span class="tab-icon">👨‍👩‍👧</span>Parent</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: SUBJECTS =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-subjects">
+  <div class="header" style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Choose Subject</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px;font-weight:600">Pick a subject — all questions AI-generated at your exact level!</div>
+    <div class="subject-grid" style="margin-bottom:16px">
+      <div class="subj-card s-maths" onclick="selectSubject('Maths','🔢',0)">
+        <span class="subj-emoji">🔢</span>
+        <div class="subj-name">Maths</div>
+        <div class="subj-sub">Arithmetic, fractions, geometry...</div>
+        <div style="margin-top:8px;font-size:11px;font-weight:700">Level 3 · 12/24 done</div>
+        <div class="prog-track" style="margin-top:4px;background:rgba(0,0,0,.1)"><div class="prog-fill" style="width:50%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+      </div>
+      <div class="subj-card s-english" onclick="selectSubject('English','📖',1)">
+        <span class="subj-emoji">📖</span>
+        <div class="subj-name">English</div>
+        <div class="subj-sub">Comprehension, grammar, writing...</div>
+        <div style="margin-top:8px;font-size:11px;font-weight:700">Level 3 · 18/24 done</div>
+        <div class="prog-track" style="margin-top:4px;background:rgba(0,0,0,.1)"><div class="prog-fill" style="width:75%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+      </div>
+      <div class="subj-card s-verbal" onclick="selectSubject('Verbal Reasoning','💬',2)">
+        <span class="subj-emoji">💬</span>
+        <div class="subj-name">Verbal Reasoning</div>
+        <div class="subj-sub">Analogies, codes, word puzzles...</div>
+        <div style="margin-top:8px;font-size:11px;font-weight:700">Level 2 · 8/24 done</div>
+        <div class="prog-track" style="margin-top:4px;background:rgba(0,0,0,.1)"><div class="prog-fill" style="width:33%;background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+      </div>
+      <div class="subj-card s-nonverbal" onclick="selectSubject('Non-Verbal Reasoning','🔷',3)">
+        <span class="subj-emoji">🔷</span>
+        <div class="subj-name">Non-Verbal</div>
+        <div class="subj-sub">Patterns, sequences, shapes...</div>
+        <div style="margin-top:8px;font-size:11px;font-weight:700">Level 1 · 3/24 done</div>
+        <div class="prog-track" style="margin-top:4px;background:rgba(0,0,0,.1)"><div class="prog-fill" style="width:12%;background:linear-gradient(90deg,#ec4899,#f472b6)"></div></div>
+      </div>
+    </div>
+    <div style="background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.25);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:32px">🤖</div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:var(--green2)">AI Question Generator Active</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Unlimited unique questions tailored to your level. Never run out of practice!</div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn" onclick="goTo('s-dashboard')"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn active"><span class="tab-icon">📚</span>Practice</button>
+    <button class="tab-btn" onclick="goTo('s-leaderboard')"><span class="tab-icon">🏆</span>Ranks</button>
+    <button class="tab-btn" onclick="goTo('s-analytics')"><span class="tab-icon">📈</span>Progress</button>
+    <button class="tab-btn" onclick="goTo('s-parent')"><span class="tab-icon">👨‍👩‍👧</span>Parent</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: GRAMMAR SCHOOLS =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-grammar">
+  <div class="header" style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Grammar School Prep</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="background:rgba(245,158,11,.1);border:1.5px solid rgba(245,158,11,.25);border-radius:14px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--gold)">🏰 10 Major UK 11+ Grammar Exams</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">AI generates exam-specific questions for each school</div>
+    </div>
+    <div id="grammar-list"></div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: MOCK TESTS =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-mocktests">
+  <div class="header" style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">Mock Tests</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px;font-weight:600">Full timed papers — just like the real exam!</div>
+    <div id="mock-list"></div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: CHAPTERS =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-chapters">
+  <div class="header" style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title" id="ch-title">Maths — Level 3</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div class="prog-track" style="flex:1"><div class="prog-fill prog-gold" style="width:50%"></div></div>
+      <span style="font-size:12px;color:rgba(255,255,255,.5);font-weight:700">12/24</span>
+    </div>
+    <div id="chapter-list"></div>
+    <div style="background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.25);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;margin-top:8px">
+      <div style="font-size:24px">🤖</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6)"><strong style="color:var(--green2)">AI Question Generator</strong> linked — unlimited questions at your level!</div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: PRACTICE QUESTION =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-practice">
+  <div style="background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:12px 16px;flex-shrink:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <button class="back-btn" style="width:32px;height:32px;font-size:16px" onclick="goBack()">←</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="badge badge-gold" id="pr-xp-badge">+15 XP</span>
+        <span class="badge badge-purple" id="pr-level">Level 3</span>
+      </div>
+      <button style="width:32px;height:32px;border-radius:50%;background:rgba(245,158,11,.2);border:none;cursor:pointer;font-size:16px;border:1px solid rgba(245,158,11,.3)" onclick="showHintPractice()">💡</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <span style="font-size:12px;color:rgba(255,255,255,.5);font-weight:700" id="pr-progress-label">Chapter 2 · Q5</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill prog-purple" id="pr-progress" style="width:62%"></div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="card" style="margin-bottom:14px;background:rgba(255,255,255,.97)">
+      <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px">PRACTICE QUESTION</div>
+      <div id="pr-text" style="font-size:15px;line-height:1.7;color:var(--text);font-weight:600"></div>
+    </div>
+    <div id="pr-options"></div>
+    <div class="hint-box" id="pr-hint" style="display:none;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3)">
+      <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px">💡 Magic Hint</div>
+      <div id="pr-hint-text" style="font-size:12px;color:rgba(255,255,255,.7)"></div>
+    </div>
+    <div id="pr-feedback" style="display:none;border-radius:12px;padding:14px;margin-top:10px"></div>
+  </div>
+  <div style="padding:12px 16px;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="loadNewQuestion()">🤖 New Q</button>
+      <button class="btn btn-primary" id="pr-next-btn" style="flex:1;display:none" onclick="nextPracticeQuestion()">Next →</button>
+      <div id="pr-placeholder" style="flex:1;font-size:12px;color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:600">Choose your answer</div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: LEVEL COMPLETE =============================== -->
+<div class="screen magic-bg slide-in" id="s-levelcomplete">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;position:relative;z-index:1">
+    <div style="font-size:80px;margin-bottom:8px;animation:bounceIn .6s ease">🎉</div>
+    <div style="font-family:var(--font-display);font-size:32px;color:var(--gold);margin-bottom:4px">Level Complete!</div>
+    <div style="font-size:32px;margin-bottom:16px" id="lc-stars">★★★</div>
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:20px;margin-bottom:20px;width:100%;backdrop-filter:blur(10px)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div><div style="font-size:26px;font-weight:900;color:var(--gold)" id="lc-xp">+150</div><div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700">XP EARNED</div></div>
+        <div><div style="font-size:26px;font-weight:900;color:var(--green2)" id="lc-score">8/10</div><div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700">CORRECT</div></div>
+        <div><div style="font-size:26px;font-weight:900;color:var(--blue2)" id="lc-time">4:32</div><div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700">TIME</div></div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;width:100%">
+      <div style="font-size:13px;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:10px">🏆 REWARDS UNLOCKED</div>
+      <div style="display:flex;justify-content:center;gap:12px" id="lc-rewards">
+        <div style="text-align:center"><div style="font-size:40px">🏅</div><div style="font-size:10px;color:var(--gold);font-weight:700;margin-top:4px">Chapter Master</div></div>
+        <div style="text-align:center"><div style="font-size:40px">⚡</div><div style="font-size:10px;color:var(--purple3);font-weight:700;margin-top:4px">Speed Wizard</div></div>
+        <div style="text-align:center"><div style="font-size:40px">🔥</div><div style="font-size:10px;color:var(--orange);font-weight:700;margin-top:4px">8-Day Streak</div></div>
+      </div>
+    </div>
+    <!-- Motivational message -->
+    <div style="background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.3);border-radius:14px;padding:14px;margin-bottom:20px;width:100%">
+      <div style="font-size:16px;font-weight:800;color:var(--gold)" id="lc-message">🌟 You're absolutely brilliant!</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px" id="lc-submessage">Keep this up and you'll ace that 11+ exam!</div>
+    </div>
+    <button class="btn btn-gold" style="margin-bottom:10px;width:100%" onclick="goTo('s-chapters');launchConfetti()">Continue Learning →</button>
+    <button class="btn btn-ghost" style="width:100%" onclick="goTo('s-leaderboard')">See Leaderboard 🏆</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: LEADERBOARD =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-leaderboard">
+  <div style="background:linear-gradient(160deg,#1a1035,#2d1060);padding:16px;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <div style="font-family:var(--font-display);font-size:22px;color:var(--gold)">🏆 Leaderboard</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <div class="chip active" id="lb-chip-class" onclick="switchLB('class')">My Class</div>
+      <div class="chip inactive" id="lb-chip-school" onclick="switchLB('school')">My School</div>
+      <div class="chip inactive" id="lb-chip-national" onclick="switchLB('national')">National</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <!-- Top 3 podium -->
+    <div style="display:flex;justify-content:space-around;align-items:flex-end;margin-bottom:20px;background:rgba(255,255,255,.03);border-radius:16px;padding:16px">
+      <div style="text-align:center">
+        <div style="font-size:32px">🥈</div>
+        <div style="font-size:32px">🦋</div>
+        <div style="font-size:12px;font-weight:800;color:#fff;margin-top:4px">Aria M.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5)">2,180 XP</div>
+      </div>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:40px">🥇</div>
+        <div style="font-size:40px">🦄</div>
+        <div style="font-size:13px;font-weight:900;color:var(--gold);margin-top:4px">Jake T.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5)">2,640 XP</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:32px">🥉</div>
+        <div style="font-size:32px">🐉</div>
+        <div style="font-size:12px;font-weight:800;color:#fff;margin-top:4px">Sam K.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5)">1,950 XP</div>
+      </div>
+    </div>
+    <div id="lb-list"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn" onclick="goTo('s-dashboard')"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn" onclick="goTo('s-subjects')"><span class="tab-icon">📚</span>Practice</button>
+    <button class="tab-btn active"><span class="tab-icon">🏆</span>Ranks</button>
+    <button class="tab-btn" onclick="goTo('s-analytics')"><span class="tab-icon">📈</span>Progress</button>
+    <button class="tab-btn" onclick="goTo('s-parent')"><span class="tab-icon">👨‍👩‍👧</span>Parent</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: ANALYTICS =============================== -->
+<div class="screen slide-in" style="background:#0f0a1e" id="s-analytics">
+  <div class="header" style="background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">My Progress 📈</div>
+    <div class="header-right"></div>
+  </div>
+  <div class="scroll-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="stat-box"><div class="stat-val" style="color:var(--purple3)">127</div><div class="stat-label">Questions Today</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--green2)">84%</div><div class="stat-label">Accuracy</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--gold)">🔥 7</div><div class="stat-label">Day Streak</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--blue2)">3.4h</div><div class="stat-label">This Week</div></div>
+    </div>
+    <div class="card-dark" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:14px">📅 Weekly Activity</div>
+      <div style="display:flex;align-items:flex-end;gap:8px;height:80px;justify-content:space-around">
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:48px"></div><div class="chart-label">Mon</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:64px"></div><div class="chart-label">Tue</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:40px"></div><div class="chart-label">Wed</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:72px"></div><div class="chart-label">Thu</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:56px"></div><div class="chart-label">Fri</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:80px;background:linear-gradient(180deg,var(--gold2),var(--gold))"></div><div class="chart-label">Sat</div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:20px;opacity:.3"></div><div class="chart-label">Sun</div></div>
+      </div>
+    </div>
+    <div class="card-dark" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">📊 Subject Accuracy</div>
+      <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">🔢 Maths</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-gold" style="width:72%"></div></div><span class="score-pct" style="color:var(--gold)">72%</span></div>
+      <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">📖 English</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-blue" style="width:85%"></div></div><span class="score-pct" style="color:var(--blue2)">85%</span></div>
+      <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">💬 Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-green" style="width:68%"></div></div><span class="score-pct" style="color:var(--green2)">68%</span></div>
+      <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">🔷 Non-Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-red" style="width:55%"></div></div><span class="score-pct" style="color:var(--red2)">55%</span></div>
+    </div>
+    <div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--red2);margin-bottom:8px">⚠️ Focus Areas</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px">• Non-Verbal: Spatial rotation patterns</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px">• Maths: Percentages & word problems</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6)">• Verbal: Code-breaking sequences</div>
+      <button class="btn btn-danger btn-sm" style="margin-top:10px;width:100%" onclick="goTo('s-subjects')">Practice Weak Topics Now</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn" onclick="goTo('s-dashboard')"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn" onclick="goTo('s-subjects')"><span class="tab-icon">📚</span>Practice</button>
+    <button class="tab-btn" onclick="goTo('s-leaderboard')"><span class="tab-icon">🏆</span>Ranks</button>
+    <button class="tab-btn active"><span class="tab-icon">📈</span>Progress</button>
+    <button class="tab-btn" onclick="goTo('s-parent')"><span class="tab-icon">👨‍👩‍👧</span>Parent</button>
+  </div>
+</div>
+
+<!-- =============================== SCREEN: PARENT DASHBOARD =============================== -->
+<div class="screen slide-in" style="background:#0a0f1e" id="s-parent">
+  <div style="background:linear-gradient(160deg,#0a0f1e,#1a2744);padding:16px;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <div style="font-family:var(--font-display);font-size:20px;color:#93c5fd">👨‍👩‍👧 Parent Dashboard</div>
+    </div>
+    <div class="p-tabs">
+      <button class="p-tab active" onclick="switchParentTab(0,this)">Overview</button>
+      <button class="p-tab" onclick="switchParentTab(1,this)">Progress</button>
+      <button class="p-tab" onclick="switchParentTab(2,this)">Settings</button>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <!-- Tab 0: Overview -->
+    <div id="p-tab-0">
+      <div style="background:rgba(59,130,246,.1);border:1.5px solid rgba(59,130,246,.25);border-radius:16px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+        <div style="font-size:44px">🧙‍♂️</div>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#fff">Merlin (Aryan, 9)</div>
+          <div style="font-size:12px;color:#93c5fd;margin-top:2px">Year 5 · Kent Test</div>
+          <div style="font-size:11px;color:var(--green2);margin-top:3px">🔥 7-day streak · Level 3 Wizard</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="stat-box"><div class="stat-val" style="color:#93c5fd">3.4h</div><div class="stat-label">This Week</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--green2)">84%</div><div class="stat-label">Accuracy</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--gold)">1,240</div><div class="stat-label">Total XP</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--pink)">#42</div><div class="stat-label">Class Rank</div></div>
+      </div>
+      <div class="card-dark" style="margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">📊 Performance</div>
+        <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">🔢 Maths</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-gold" style="width:72%"></div></div><span class="score-pct" style="color:var(--gold)">72%</span></div>
+        <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">📖 English</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-blue" style="width:85%"></div></div><span class="score-pct" style="color:var(--blue2)">85%</span></div>
+        <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">💬 Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-green" style="width:68%"></div></div><span class="score-pct" style="color:var(--green2)">68%</span></div>
+        <div class="score-row"><span class="score-label" style="color:rgba(255,255,255,.6)">🔷 Non-Verbal</span><div class="prog-track" style="flex:1"><div class="prog-fill prog-red" style="width:55%"></div></div><span class="score-pct" style="color:var(--red2)">55%</span></div>
+      </div>
+      <div style="background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2);border-radius:14px;padding:14px">
+        <div style="font-size:13px;font-weight:800;color:var(--red2);margin-bottom:8px">⚠️ Needs Attention</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px">• Non-Verbal Reasoning — 55% accuracy</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.6)">• Recommend 15 min NVR daily this week</div>
+      </div>
+    </div>
+    <!-- Tab 1: Progress (hidden by default) -->
+    <div id="p-tab-1" style="display:none">
+      <div class="card-dark" style="margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:14px">📅 Weekly Activity</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:80px;justify-content:space-around">
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:48px;background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div><div class="chart-label">Mon</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:64px;background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div><div class="chart-label">Tue</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:40px;background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div><div class="chart-label">Wed</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:72px;background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div><div class="chart-label">Thu</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:56px;background:linear-gradient(180deg,#60a5fa,#3b82f6)"></div><div class="chart-label">Fri</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:80px;background:linear-gradient(180deg,var(--gold2),var(--gold))"></div><div class="chart-label">Sat</div></div>
+          <div class="chart-bar-wrap"><div class="chart-bar-col" style="height:20px;opacity:.3"></div><div class="chart-label">Sun</div></div>
+        </div>
+      </div>
+      <div class="card-dark">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">📈 Level Progress</div>
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.7);font-weight:700">🔢 Maths</span><span style="font-size:12px;color:var(--gold);font-weight:700">Level 3 → 4 (72%)</span></div>
+          <div class="prog-track"><div class="prog-fill prog-gold" style="width:72%"></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:rgba(255,255,255,.7);font-weight:700">📖 English</span><span style="font-size:12px;color:var(--blue2);font-weight:700">Level 3 → 4 (85%)</span></div>
+          <div class="prog-track"><div class="prog-fill prog-blue" style="width:85%"></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Tab 2: Settings -->
+    <div id="p-tab-2" style="display:none">
+      <div class="card-dark" style="margin-bottom:12px">
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:14px">⚙️ Parent Controls</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div><div style="font-size:13px;color:#fff;font-weight:700">Daily Time Limit</div><div style="font-size:11px;color:rgba(255,255,255,.4)">Auto-stop after limit</div></div>
+          <select class="input" style="width:auto;padding:8px 12px;font-size:13px">
+            <option>30 min</option>
+            <option selected>60 min</option>
+            <option>90 min</option>
+            <option>No limit</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div><div style="font-size:13px;color:#fff;font-weight:700">Daily Reminder</div><div style="font-size:11px;color:rgba(255,255,255,.4)">Push notification time</div></div>
+          <input type="time" class="input" style="width:auto;padding:8px 12px;font-size:13px" value="18:30">
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:13px;color:#fff;font-weight:700">Weekly Email Report</div><div style="font-size:11px;color:rgba(255,255,255,.4)">Summary every Sunday</div></div>
+          <div style="background:var(--green);width:44px;height:24px;border-radius:12px;display:flex;align-items:center;padding:2px;cursor:pointer"><div style="width:20px;height:20px;background:#fff;border-radius:50%;margin-left:auto"></div></div>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="margin-bottom:10px">📧 Send Progress Report Now</button>
+      <button class="btn btn-ghost">➕ Add Another Child</button>
+    </div>
+  </div>
+  <div class="tab-bar" style="border-color:rgba(255,255,255,.06)">
+    <button class="tab-btn" onclick="goTo('s-dashboard')"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn" onclick="goTo('s-subjects')"><span class="tab-icon">📚</span>Practice</button>
+    <button class="tab-btn" onclick="goTo('s-leaderboard')"><span class="tab-icon">🏆</span>Ranks</button>
+    <button class="tab-btn" onclick="goTo('s-analytics')"><span class="tab-icon">📈</span>Progress</button>
+    <button class="tab-btn active"><span class="tab-icon">👨‍👩‍👧</span>Parent</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// =============================== APP STATE ===============================
+const state = {
+  currentScreen: 's-landing',
+  history: [],
+  selectedAvatar: {emoji:'🧙‍♂️', name:'Merlin'},
+  userName: 'Merlin',
+  userEmail: '',
+  selectedSubject: 'Maths',
+  selectedSubjectEmoji: '🔢',
+  selectedSubjectIdx: 0,
+  questionIdx: 0,
+  practiceIdx: 0,
+  score: {correct:0, total:0},
+  xp: 1240,
+  streak: 7,
+  level: 3,
+  timerInterval: null,
+  timerSeconds: 22*60,
+  otpTimer: 59,
+  otpInterval: null,
+  musicOn: false,
+  lbTab: 'class',
+  parentTab: 0,
+  questionsAnswered: 0,
+  sessionCorrect: 0,
+};
+
+// =============================== QUESTION DATA ===============================
+const questionSets = {
+  0: [ // Maths
+    {q:"What is 3/4 of 160?",opts:["110","120","130","125"],correct:1,hint:"Divide 160 by 4, then multiply by 3.",xp:15,badge:"Maths",level:"Level 3"},
+    {q:"A train travels 240 km in 3 hours. What is its average speed in km/h?",opts:["60 km/h","70 km/h","80 km/h","90 km/h"],correct:2,hint:"Speed = Distance ÷ Time",xp:20,badge:"Maths",level:"Level 3"},
+    {q:"What is 15% of 320?",opts:["44","46","48","52"],correct:2,hint:"10% of 320 is 32. 5% is half of that.",xp:15,badge:"Maths",level:"Level 3"},
+    {q:"If 5x + 3 = 28, what is x?",opts:["4","5","6","7"],correct:1,hint:"Subtract 3 from both sides, then divide by 5.",xp:25,badge:"Maths",level:"Level 4"},
+    {q:"A rectangle has perimeter 36 cm. If its length is 11 cm, what is its width?",opts:["6 cm","7 cm","8 cm","9 cm"],correct:2,hint:"Perimeter = 2×(length + width)",xp:20,badge:"Maths",level:"Level 3"},
+  ],
+  1: [ // English
+    {q:"Choose the word most similar in meaning to BENEVOLENT:",opts:["Malicious","Generous","Indifferent","Powerful"],correct:1,hint:"Think about the prefix 'bene' meaning 'good/well' in Latin.",xp:15,badge:"English",level:"Level 3"},
+    {q:"Which sentence is punctuated correctly?",opts:["The dog barked loudly, and it woke everyone up.","The dog barked loudly and, it woke everyone up.","The dog barked, loudly and it woke everyone up.","The dog, barked loudly and it woke everyone up."],correct:0,hint:"A comma before 'and' joins two independent clauses.",xp:20,badge:"English",level:"Level 3"},
+    {q:"What is the plural of 'phenomenon'?",opts:["Phenomenons","Phenomenas","Phenomena","Phenomenes"],correct:2,hint:"This word comes from Greek and follows a special pluralisation rule.",xp:20,badge:"English",level:"Level 4"},
+    {q:"Which word is a synonym of ELOQUENT?",opts:["Clumsy","Articulate","Silent","Confused"],correct:1,hint:"Eloquent describes how someone speaks — think about a skilled speaker.",xp:15,badge:"English",level:"Level 3"},
+    {q:"Find the odd one out: HUGE · ENORMOUS · TINY · GIGANTIC",opts:["HUGE","ENORMOUS","TINY","GIGANTIC"],correct:2,hint:"Three of these words share a similar meaning.",xp:15,badge:"English",level:"Level 2"},
+  ],
+  2: [ // Verbal Reasoning
+    {q:"If BOOK = 2-15-15-11, what does CAT equal?",opts:["3-1-20","3-1-19","3-21-20","3-1-20"],correct:0,hint:"A=1, B=2, C=3... each letter has a position number.",xp:20,badge:"Verbal",level:"Level 3"},
+    {q:"Complete the analogy: Doctor : Hospital :: Teacher : ?",opts:["Library","School","Clinic","Office"],correct:1,hint:"Where does each professional work?",xp:15,badge:"Verbal",level:"Level 2"},
+    {q:"If RAIN is coded as SBJO, how is SNOW coded?",opts:["TOPX","TNPX","TOPY","UPPY"],correct:0,hint:"Each letter moves forward by one position in the alphabet.",xp:25,badge:"Verbal",level:"Level 4"},
+    {q:"Find the word that doesn't belong: OAK · PINE · ROSE · BIRCH · ELM",opts:["OAK","PINE","ROSE","BIRCH"],correct:2,hint:"Four of these are types of tree.",xp:15,badge:"Verbal",level:"Level 2"},
+    {q:"Which TWO words are most similar: SWIFT · RAPID · SLOW · QUICK · HEAVY",opts:["SWIFT and SLOW","RAPID and QUICK","QUICK and HEAVY","SWIFT and HEAVY"],correct:1,hint:"Think about speed words.",xp:20,badge:"Verbal",level:"Level 3"},
+  ],
+  3: [ // Non-Verbal
+    {q:"Look at the sequence: ○ ●○ ●●○ _?_\nWhat comes next?",opts:["●●●○","●○●○","○●●","●●●"],correct:0,hint:"Count how many filled circles are added each time.",xp:20,badge:"Non-Verbal",level:"Level 2"},
+    {q:"A shape has 4 equal sides and 4 right angles. What is it?",opts:["Rectangle","Rhombus","Square","Parallelogram"],correct:2,hint:"Equal sides AND right angles — which one has both?",xp:15,badge:"Non-Verbal",level:"Level 1"},
+    {q:"If a shape is rotated 90° clockwise, which direction does an arrow pointing UP now point?",opts:["Left","Right","Down","Up"],correct:1,hint:"Imagine turning a clock hand from 12 o'clock towards 3 o'clock.",xp:25,badge:"Non-Verbal",level:"Level 3"},
+    {q:"How many squares (of any size) are in a 3×3 grid?",opts:["9","12","14","16"],correct:2,hint:"Count: 1×1 squares, 2×2 squares, and the full 3×3 square.",xp:30,badge:"Non-Verbal",level:"Level 4"},
+    {q:"Which shape is the odd one out: △ □ ○ ◇ ▭",opts:["△","□","○","▭"],correct:2,hint:"Think about whether the shapes have straight sides or not.",xp:15,badge:"Non-Verbal",level:"Level 2"},
+  ],
+};
+
+const motivationalMessages = [
+  {msg:"🌟 You're absolutely brilliant!", sub:"Keep this up and you'll ace that 11+ exam!"},
+  {msg:"⚡ That's WIZARD-LEVEL thinking!", sub:"You're getting smarter with every question!"},
+  {msg:"🔥 On fire! Nothing can stop you!", sub:"You're climbing the ranks fast!"},
+  {msg:"💫 Incredible work, genius!", sub:"Your brain is like a supercomputer!"},
+  {msg:"🏆 Champion material right there!", sub:"Grammar school is going to be lucky to have you!"},
+  {msg:"🎯 Bullseye! Perfect accuracy!", sub:"You're exactly where you need to be!"},
+  {msg:"🧙 The Wizard's Council is impressed!", sub:"Level up incoming — keep pushing!"},
+  {msg:"🚀 To infinity and beyond!", sub:"There's no limit to how far you'll go!"},
+];
+
+const correctFeedback = [
+  "🎉 BRILLIANT! That's exactly right!",
+  "⚡ AMAZING! You're on fire!",
+  "🌟 SUPERB! You're a genius!",
+  "🔥 PERFECT! Keep it up, wizard!",
+  "💫 OUTSTANDING! Nothing stops you!",
+  "🏆 EXCELLENT! Top of the class!",
+  "✨ MAGICAL! You got it spot on!",
+  "🎯 BULLSEYE! Incredible!",
+];
+
+const wrongFeedback = [
+  "Almost there! 💪 You'll get it next time.",
+  "Close! Every mistake teaches you something.",
+  "Don't worry — even wizards make mistakes! Try again.",
+  "Good try! 🌟 The correct answer helps you learn.",
+];
+
+const grammarSchools = [
+  {name:"🦁 Kent Test",area:"Kent grammar schools",board:"GL Assessment",tags:["English","Maths","VR","NVR","Spatial"],desc:"MCQ · Comprehension · Code breaking · Pattern recognition"},
+  {name:"🌳 CSSE Essex",area:"Colchester Royal Grammar & others",board:"Custom Exam",tags:["English","Maths"],desc:"Long comprehension · Creative writing · Maths reasoning"},
+  {name:"⚖️ Sutton SET",area:"Wilson's · Nonsuch · Wallington",board:"GL-style",tags:["Maths","English","Reasoning"],desc:"Stage 1 & 2 · MCQ reasoning · Comprehension · Problem solving"},
+  {name:"🦅 Bexley Test",area:"Bexley grammar schools",board:"GL Assessment",tags:["VR","Maths"],desc:"Word puzzles · Codes · Sequences · Arithmetic reasoning"},
+  {name:"🦋 Buckinghamshire 11+",area:"Bucks grammar schools",board:"GL Assessment",tags:["VR","NVR","Maths"],desc:"Pattern recognition · Analogies · Sequences · Arithmetic"},
+  {name:"🐻 Warwickshire 11+",area:"Warwickshire grammars",board:"GL Assessment",tags:["English","Maths","VR"],desc:"MCQ reasoning · Comprehension · Arithmetic word problems"},
+  {name:"🦊 Birmingham / West Midlands",area:"King Edward VI grammar schools",board:"GL Assessment",tags:["Maths","English","VR"],desc:"Maths problem solving · Reading comprehension · Reasoning"},
+  {name:"🌊 Trafford 11+",area:"Manchester / Trafford grammars",board:"GL Assessment",tags:["English","Maths","VR"],desc:"Standard GL multiple-choice reasoning and maths"},
+  {name:"🌿 Devon 11+",area:"Devon grammar schools",board:"GL Assessment",tags:["English","Maths","NVR"],desc:"MCQ reasoning and maths problems"},
+  {name:"🏙️ London Consortium",area:"London selective schools",board:"Mixed",tags:["Maths","English","Reasoning"],desc:"Creative writing · Difficult comprehension · School-specific"},
+];
+
+const mockTests = [
+  {name:"🦁 Kent Test Full Paper", duration:"45 min", questions:50, subjects:["English","Maths","VR","NVR"], diff:"Medium"},
+  {name:"⚖️ Sutton SET Stage 1", duration:"35 min", questions:40, subjects:["Maths","English"], diff:"Hard"},
+  {name:"🦋 Bucks 11+ Paper A", duration:"40 min", questions:45, subjects:["VR","NVR","Maths"], diff:"Medium"},
+  {name:"🔢 Maths Only Sprint", duration:"20 min", questions:25, subjects:["Maths"], diff:"Easy"},
+  {name:"💬 Verbal Reasoning Blitz", duration:"25 min", questions:30, subjects:["VR"], diff:"Medium"},
+];
+
+const chapters = [
+  {name:"1. Number Sequences", status:"done", levels:[1,1,1]},
+  {name:"2. Fractions & Decimals", status:"active", levels:[1,1,0]},
+  {name:"3. Percentages", status:"locked", levels:[0,0,0]},
+  {name:"4. Ratio & Proportion", status:"locked", levels:[0,0,0]},
+  {name:"5. Word Problems", status:"locked", levels:[0,0,0]},
+  {name:"6. Geometry", status:"locked", levels:[0,0,0]},
+];
+
+// =============================== SCREEN NAV ===============================
+function goTo(screenId) {
+  const current = document.querySelector('.screen.active');
+  const next = document.getElementById(screenId);
+  if (!next || current.id === screenId) return;
+  state.history.push(current.id);
+  current.classList.remove('active');
+  next.classList.add('active');
+  state.currentScreen = screenId;
+  onScreenEnter(screenId);
+}
+
+function goBack() {
+  if (state.history.length === 0) return;
+  const prev = state.history.pop();
+  const current = document.querySelector('.screen.active');
+  current.classList.remove('active');
+  document.getElementById(prev).classList.add('active');
+  state.currentScreen = prev;
+}
+
+function onScreenEnter(id) {
+  if (id === 's-question') initQuestion();
+  if (id === 's-practice') initPractice();
+  if (id === 's-testresult') animateResults();
+  if (id === 's-leaderboard') renderLeaderboard();
+  if (id === 's-grammar') renderGrammar();
+  if (id === 's-chapters') renderChapters();
+  if (id === 's-mocktests') renderMockTests();
+  if (id === 's-levelcomplete') { launchConfetti(); showMotivation(); }
+  if (id === 's-otp') startOtpTimer();
+}
+
+// =============================== STARS ===============================
+function makeStars(containerId, count) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+    el.appendChild(s);
+  }
+}
+makeStars('landing-stars', 60);
+
+// =============================== AUTH ===============================
+function doSignup() {
+  const email = document.getElementById('su-email').value || 'parent@email.com';
+  state.userEmail = email;
+  document.getElementById('otp-email').textContent = email;
+  goTo('s-otp');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value || 'wizard@email.com';
+  state.userEmail = email;
+  document.getElementById('otp-email').textContent = email;
+  goTo('s-otp');
+}
+
+function verifyOtp() { goTo('s-avatar'); }
+
+function otpMove(el, idx) {
+  if (el.value.length === 1) {
+    const boxes = document.querySelectorAll('.otp-box');
+    if (idx < 5) boxes[idx+1].focus();
+    else { setTimeout(()=>goTo('s-avatar'), 300); }
+  }
+}
+
+function startOtpTimer() {
+  clearInterval(state.otpInterval);
+  state.otpTimer = 59;
+  state.otpInterval = setInterval(()=>{
+    state.otpTimer--;
+    const el = document.getElementById('otp-timer');
+    if (el) el.textContent = '00:' + String(state.otpTimer).padStart(2,'0');
+    if (state.otpTimer <= 0) clearInterval(state.otpInterval);
+  }, 1000);
+}
+
+function selectChip(el, group) {
+  document.querySelectorAll(`.chip`).forEach(c => { if(c.closest('.scroll-body') === el.closest('.scroll-body')) { c.classList.remove('active'); c.classList.add('inactive'); }});
+  el.classList.add('active'); el.classList.remove('inactive');
+}
+
+function selectAvatar(el, name) {
+  document.querySelectorAll('.avatar-item').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedAvatar = {emoji: el.querySelector('.avatar-emoji').textContent, name};
+  state.userName = name;
+  document.getElementById('onboard-name').textContent = name;
+  document.getElementById('dash-name').textContent = name;
+  document.getElementById('dash-avatar').textContent = state.selectedAvatar.emoji;
+}
+
+// =============================== MUSIC ===============================
+function toggleMusic() {
+  state.musicOn = !state.musicOn;
+  document.getElementById('music-btn').textContent = state.musicOn ? '🔇' : '🎵';
+  if (state.musicOn) speakText('Wizard study music on. Focus and learn!');
+}
+
+// =============================== TEST / QUESTION ===============================
+let currentQuestions = [];
+let currentQIdx = 0;
+let questionAnswered = false;
+
+function startTest() {
+  currentQuestions = [...questionSets[0], ...questionSets[1], ...questionSets[2], ...questionSets[3]].sort(()=>Math.random()-.5).slice(0,10);
+  currentQIdx = 0;
+  state.score = {correct:0, total:0};
+  goTo('s-question');
+}
+
+function initQuestion() {
+  if (currentQuestions.length === 0) {
+    currentQuestions = Object.values(questionSets).flat().sort(()=>Math.random()-.5).slice(0,10);
+  }
+  questionAnswered = false;
+  clearInterval(state.timerInterval);
+  state.timerSeconds = 22 * 60;
+  startQuestionTimer();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = currentQuestions[currentQIdx];
+  if (!q) { goTo('s-testresult'); return; }
+  document.getElementById('q-num').textContent = currentQIdx + 1;
+  document.getElementById('q-num2').textContent = currentQIdx + 1;
+  document.getElementById('q-total').textContent = currentQuestions.length;
+  document.getElementById('q-badge').textContent = q.badge;
+  document.getElementById('q-level').textContent = q.level;
+  document.getElementById('q-xp-label').textContent = '+' + q.xp + ' XP';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-hint-text').textContent = q.hint;
+  document.getElementById('q-hint').style.display = 'none';
+  document.getElementById('q-feedback').style.display = 'none';
+  document.getElementById('q-next-btn').style.display = 'none';
+  document.getElementById('q-placeholder').style.display = 'flex';
+  const pct = Math.round((currentQIdx / currentQuestions.length) * 100);
+  document.getElementById('q-progress').style.width = pct + '%';
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'qa-option';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${o}`;
+    btn.onclick = () => answerQuestion(i, btn, q);
+    opts.appendChild(btn);
+  });
+  questionAnswered = false;
+}
+
+function answerQuestion(chosen, btn, q) {
+  if (questionAnswered) return;
+  questionAnswered = true;
+  clearInterval(state.timerInterval);
+  const allBtns = document.querySelectorAll('#q-options .qa-option');
+  allBtns.forEach(b => b.disabled = true);
+  const correct = chosen === q.correct;
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) allBtns[q.correct].classList.add('correct');
+  const fb = document.getElementById('q-feedback');
+  fb.style.display = 'block';
+  if (correct) {
+    state.score.correct++;
+    state.xp += q.xp;
+    const msg = correctFeedback[Math.floor(Math.random()*correctFeedback.length)];
+    fb.style.cssText = 'display:block;background:#d1fae5;border:1.5px solid #10b981;border-radius:12px;padding:12px';
+    fb.innerHTML = `<div style="font-size:13px;font-weight:800;color:#065f46">${msg}</div><div style="font-size:12px;color:#065f46;margin-top:4px">+${q.xp} XP earned! 🌟</div>`;
+    showXPFloat(q.xp);
+    speakText(getRandomPraise());
+  } else {
+    fb.style.cssText = 'display:block;background:#fee2e2;border:1.5px solid #ef4444;border-radius:12px;padding:12px';
+    const wf = wrongFeedback[Math.floor(Math.random()*wrongFeedback.length)];
+    fb.innerHTML = `<div style="font-size:13px;font-weight:700;color:#991b1b">${wf}</div><div style="font-size:12px;color:#7f1d1d;margin-top:4px">Correct answer: <strong>${q.opts[q.correct]}</strong></div>`;
+  }
+  state.score.total++;
+  document.getElementById('q-next-btn').style.display = 'block';
+  document.getElementById('q-placeholder').style.display = 'none';
+}
+
+function nextQuestion() {
+  currentQIdx++;
+  if (currentQIdx >= currentQuestions.length) { goTo('s-testresult'); }
+  else { renderQuestion(); startQuestionTimer(); }
+}
+
+function showHint() {
+  document.getElementById('q-hint').style.display = document.getElementById('q-hint').style.display === 'none' ? 'block' : 'none';
+}
+
+function startQuestionTimer() {
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(()=>{
+    state.timerSeconds--;
+    const m = Math.floor(state.timerSeconds/60);
+    const s = state.timerSeconds % 60;
+    const el = document.getElementById('q-timer');
+    if (el) el.textContent = m + ':' + String(s).padStart(2,'0');
+    if (state.timerSeconds <= 0) clearInterval(state.timerInterval);
+  }, 1000);
+}
+
+// =============================== RESULTS ===============================
+function animateResults() {
+  const scores = {maths:72, english:85, verbal:68, nv:55};
+  setTimeout(()=>{
+    animBar('res-maths', scores.maths);
+    animBar('res-english', scores.english);
+    animBar('res-verbal', scores.verbal);
+    animBar('res-nv', scores.nv);
+  }, 300);
+  launchConfetti();
+  speakText('Congratulations! Brilliant results! You are a real wizard!');
+}
+
+function animBar(id, pct) {
+  const el = document.getElementById(id);
+  if (el) setTimeout(()=>el.style.width = pct+'%', 100);
+}
+
+// =============================== PRACTICE ===============================
+let practiceQuestions = [];
+let practiceIdx = 0;
+let practiceAnswered = false;
+
+function selectSubject(name, emoji, idx) {
+  state.selectedSubject = name;
+  state.selectedSubjectEmoji = emoji;
+  state.selectedSubjectIdx = idx;
+  document.getElementById('ch-title').textContent = emoji + ' ' + name;
+  practiceQuestions = [...(questionSets[idx] || questionSets[0])].sort(()=>Math.random()-.5);
+  practiceIdx = 0;
+  goTo('s-chapters');
+}
+
+function renderChapters() {
+  const list = document.getElementById('chapter-list');
+  list.innerHTML = '';
+  chapters.forEach((ch, i) => {
+    const row = document.createElement('div');
+    row.className = 'chapter-row' + (ch.status==='active'?' active':'');
+    if (ch.status !== 'locked') row.onclick = () => { practiceIdx = 0; goTo('s-practice'); initPractice(); };
+    const icon = ch.status==='done'?'✅':ch.status==='active'?'🔥':'🔒';
+    const dots = ch.levels.map(l=>`<div class="level-dot ${l===1?'done':''} ${ch.status==='active'&&l===0?'active':''}"></div>`).join('');
+    const badge = ch.status==='done'?'<span class="badge badge-green">Done</span>':ch.status==='active'?'<span class="badge badge-gold">Active</span>':'<span class="badge" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)">Locked</span>';
+    row.innerHTML = `<div style="font-size:22px">${icon}</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:${ch.status==='locked'?'rgba(255,255,255,.3)':'#fff'}">${ch.name}</div><div class="level-dots" style="margin-top:5px">${dots}</div></div>${badge}`;
+    list.appendChild(row);
+  });
+}
+
+function initPractice() {
+  practiceAnswered = false;
+  const idx = state.selectedSubjectIdx || 0;
+  practiceQuestions = practiceQuestions.length ? practiceQuestions : [...(questionSets[idx])].sort(()=>Math.random()-.5);
+  renderPracticeQuestion();
+}
+
+function renderPracticeQuestion() {
+  const q = practiceQuestions[practiceIdx % practiceQuestions.length];
+  if (!q) return;
+  document.getElementById('pr-text').textContent = q.q;
+  document.getElementById('pr-hint-text').textContent = q.hint;
+  document.getElementById('pr-hint').style.display = 'none';
+  document.getElementById('pr-feedback').style.display = 'none';
+  document.getElementById('pr-next-btn').style.display = 'none';
+  document.getElementById('pr-placeholder').style.display = 'flex';
+  document.getElementById('pr-xp-badge').textContent = '+' + q.xp + ' XP';
+  document.getElementById('pr-level').textContent = q.level;
+  document.getElementById('pr-progress-label').textContent = state.selectedSubject + ' · Q' + (practiceIdx+1);
+  const pct = Math.min(((practiceIdx % 10) / 10) * 100, 95);
+  document.getElementById('pr-progress').style.width = pct + '%';
+  const opts = document.getElementById('pr-options');
+  opts.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'qa-option';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${o}`;
+    btn.onclick = () => answerPractice(i, btn, q);
+    opts.appendChild(btn);
+  });
+  practiceAnswered = false;
+}
+
+function answerPractice(chosen, btn, q) {
+  if (practiceAnswered) return;
+  practiceAnswered = true;
+  document.querySelectorAll('#pr-options .qa-option').forEach(b=>b.disabled=true);
+  const correct = chosen === q.correct;
+  btn.classList.add(correct?'correct':'wrong');
+  if (!correct) document.querySelectorAll('#pr-options .qa-option')[q.correct].classList.add('correct');
+  const fb = document.getElementById('pr-feedback');
+  fb.style.display = 'block';
+  if (correct) {
+    state.xp += q.xp;
+    state.questionsAnswered++;
+    state.sessionCorrect++;
+    const msg = correctFeedback[Math.floor(Math.random()*correctFeedback.length)];
+    fb.style.cssText = 'display:block;background:#d1fae5;border:1.5px solid #10b981;border-radius:12px;padding:14px';
+    fb.innerHTML = `<div style="font-size:13px;font-weight:800;color:#065f46">${msg}</div><div style="font-size:12px;color:#065f46;margin-top:4px">+${q.xp} XP! 🌟</div>`;
+    showXPFloat(q.xp);
+    speakText(getRandomPraise());
+    if (state.questionsAnswered % 5 === 0) checkForLevelComplete();
+  } else {
+    fb.style.cssText = 'display:block;background:#fee2e2;border:1.5px solid #ef4444;border-radius:12px;padding:14px';
+    fb.innerHTML = `<div style="font-size:13px;font-weight:700;color:#991b1b">${wrongFeedback[Math.floor(Math.random()*wrongFeedback.length)]}</div><div style="font-size:12px;color:#7f1d1d;margin-top:4px">Correct: <strong>${q.opts[q.correct]}</strong></div>`;
+    speakText('Not quite, but keep going! You can do it!');
+  }
+  document.getElementById('pr-next-btn').style.display = 'block';
+  document.getElementById('pr-placeholder').style.display = 'none';
+}
+
+function checkForLevelComplete() {
+  const lc = motivationalMessages[Math.floor(Math.random()*motivationalMessages.length)];
+  document.getElementById('lc-message').textContent = lc.msg;
+  document.getElementById('lc-submessage').textContent = lc.sub;
+  document.getElementById('lc-xp').textContent = '+' + (state.sessionCorrect * 15);
+  document.getElementById('lc-score').textContent = state.sessionCorrect + '/' + state.questionsAnswered;
+  goTo('s-levelcomplete');
+}
+
+function nextPracticeQuestion() {
+  practiceIdx++;
+  renderPracticeQuestion();
+}
+
+function loadNewQuestion() {
+  practiceIdx = Math.floor(Math.random() * 50);
+  const idx = state.selectedSubjectIdx || 0;
+  practiceQuestions = [...(questionSets[idx])].sort(()=>Math.random()-.5);
+  renderPracticeQuestion();
+}
+
+function showHintPractice() {
+  const h = document.getElementById('pr-hint');
+  h.style.display = h.style.display === 'none' ? 'block' : 'none';
+}
+
+// =============================== GRAMMAR RENDER ===============================
+function renderGrammar() {
+  const list = document.getElementById('grammar-list');
+  if (list.innerHTML) return;
+  grammarSchools.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'grammar-card';
+    el.onclick = () => { state.selectedSubject = s.name; state.selectedSubjectIdx = 2; practiceQuestions = [...questionSets[2],...questionSets[0]].sort(()=>Math.random()-.5); goTo('s-practice'); initPractice(); };
+    el.innerHTML = `<div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px">${s.name}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px">${s.area} · ${s.board}</div>
+      <div style="margin-bottom:6px">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4)">${s.desc}</div>`;
+    list.appendChild(el);
+  });
+}
+
+// =============================== MOCK TESTS ===============================
+function renderMockTests() {
+  const list = document.getElementById('mock-list');
+  if (list.innerHTML) return;
+  const diffColors = {Easy:'badge-green',Medium:'badge-gold',Hard:'badge-red'};
+  mockTests.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'grammar-card';
+    el.onclick = () => { currentQuestions = Object.values(questionSets).flat().sort(()=>Math.random()-.5).slice(0,10); currentQIdx=0; state.score={correct:0,total:0}; goTo('s-question'); };
+    el.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="font-size:14px;font-weight:800;color:#fff">${t.name}</div>
+      <span class="badge ${diffColors[t.diff]}">${t.diff}</span>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px">⏱ ${t.duration} · ${t.questions} questions</div>
+    <div>${t.subjects.map(s=>`<span class="tag">${s}</span>`).join('')}</div>`;
+    list.appendChild(el);
+  });
+}
+
+// =============================== LEADERBOARD ===============================
+const lbData = {
+  class:[
+    {rank:1, emoji:'🦄', name:'Jake T.', xp:2640, class:'Year 5', me:false},
+    {rank:2, emoji:'🦋', name:'Aria M.', xp:2180, class:'Year 5', me:false},
+    {rank:3, emoji:'🐉', name:'Sam K.', xp:1950, class:'Year 5', me:false},
+    {rank:4, emoji:'🦊', name:'Lily P.', xp:1820, class:'Year 6', me:false},
+    {rank:5, emoji:'🐺', name:'Ethan R.', xp:1710, class:'Year 5', me:false},
+    {rank:42, emoji:'🧙‍♂️', name:'Merlin (You)', xp:1240, class:'Year 5', me:true},
+  ],
+  school:[
+    {rank:1, emoji:'⭐', name:'Emma S.', xp:3100, class:'Year 6', me:false},
+    {rank:2, emoji:'🦄', name:'Jake T.', xp:2640, class:'Year 5', me:false},
+    {rank:3, emoji:'🏆', name:'Noah W.', xp:2400, class:'Year 6', me:false},
+    {rank:87, emoji:'🧙‍♂️', name:'Merlin (You)', xp:1240, class:'Year 5', me:true},
+  ],
+  national:[
+    {rank:1, emoji:'👑', name:'Alice B.', xp:8200, class:'Year 6', me:false},
+    {rank:2, emoji:'⭐', name:'James K.', xp:7850, class:'Year 6', me:false},
+    {rank:3, emoji:'🏆', name:'Sofia M.', xp:7200, class:'Year 5', me:false},
+    {rank:2847, emoji:'🧙‍♂️', name:'Merlin (You)', xp:1240, class:'Year 5', me:true},
+  ],
+};
+
+function renderLeaderboard() {
+  const data = lbData[state.lbTab];
+  const list = document.getElementById('lb-list');
+  list.innerHTML = '';
+  data.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'lb-row' + (p.me?' me':'');
+    const rankClass = p.rank===1?'gold':p.rank===2?'silver':p.rank===3?'bronze':'';
+    row.innerHTML = `<span class="rank ${rankClass}">#${p.rank}</span>
+      <span style="font-size:24px">${p.emoji}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700;color:${p.me?'var(--gold)':'#fff'}">${p.name}</div><div style="font-size:11px;color:rgba(255,255,255,.4)">${p.class}</div></div>
+      <div style="text-align:right"><div style="font-size:13px;font-weight:800;color:${p.me?'var(--gold)':'#fff'}">${p.xp.toLocaleString()} XP</div>${p.me?'<div style="font-size:10px;color:var(--green2)">↑ 3 places</div>':''}</div>`;
+    list.appendChild(row);
+  });
+}
+
+function switchLB(tab) {
+  state.lbTab = tab;
+  ['class','school','national'].forEach(t => {
+    const el = document.getElementById('lb-chip-'+t);
+    if (el) { el.classList.toggle('active', t===tab); el.classList.toggle('inactive', t!==tab); }
+  });
+  renderLeaderboard();
+}
+
+// =============================== PARENT TABS ===============================
+function switchParentTab(idx, btn) {
+  state.parentTab = idx;
+  document.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  [0,1,2].forEach(i => {
+    const el = document.getElementById('p-tab-'+i);
+    if (el) el.style.display = i===idx ? 'block' : 'none';
+  });
+}
+
+// =============================== MOTIVATION / VOICE ===============================
+function getRandomPraise() {
+  const praises = [
+    "Fantastic! You're a superstar!",
+    "Brilliant! Keep going, wizard!",
+    "Amazing work! You're on fire!",
+    "Incredible! Nothing stops you!",
+    "Outstanding! Top of the class!",
+    "Superb! You're a genius!",
+  ];
+  return praises[Math.floor(Math.random()*praises.length)];
+}
+
+function speakText(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 1.1; utt.pitch = 1.2; utt.volume = 0.8;
+  // Try to pick a child-friendly voice
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel'));
+  if (preferred) utt.voice = preferred;
+  window.speechSynthesis.speak(utt);
+}
+
+function showXPFloat(xp) {
+  const el = document.createElement('div');
+  el.className = 'xp-float';
+  el.textContent = '+' + xp + ' XP ✨';
+  el.style.cssText = `top:${Math.random()*30+30}%;left:${Math.random()*40+30}%`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1600);
+}
+
+function showMotivation() {
+  const m = motivationalMessages[Math.floor(Math.random()*motivationalMessages.length)];
+  speakText(m.msg.replace(/[^a-zA-Z0-9 '!]/g,'') + ' ' + m.sub);
+}
+
+function showRewardDetail(emoji, name, desc) {
+  const overlay = document.createElement('div');
+  overlay.className = 'celebration-overlay';
+  overlay.onclick = ()=>overlay.remove();
+  overlay.innerHTML = `<div class="celebration-box" style="text-align:center">
+    <div style="font-size:64px;margin-bottom:8px">${emoji}</div>
+    <div style="font-family:var(--font-display);font-size:24px;color:var(--gold);margin-bottom:6px">${name}</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:16px">${desc}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.4)">Tap anywhere to close</div>
+  </div>`;
+  document.body.appendChild(overlay);
+  speakText('You earned the ' + name + ' badge! ' + desc);
+}
+
+// =============================== CONFETTI ===============================
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+  const colors = ['#6c3aed','#f59e0b','#10b981','#ec4899','#3b82f6','#f97316','#fbbf24','#a855f7'];
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: canvas.width * Math.random(),
+      y: -20,
+      w: 6 + Math.random() * 10,
+      h: 4 + Math.random() * 6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vy: 3 + Math.random() * 5,
+      vx: -2 + Math.random() * 4,
+      rot: Math.random() * 360,
+      rotSpeed: -3 + Math.random() * 6,
+      opacity: 1,
+    });
+  }
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.rot += p.rotSpeed;
+      if (frame > 60) p.opacity -= 0.015;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 150) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animate();
+}
+
+// =============================== INIT ===============================
+window.speechSynthesis && window.speechSynthesis.getVoices();
+document.querySelectorAll('.screen:not(.active)').forEach(s=>s.style.opacity='0');
+</script>
+</body>
+</html>
