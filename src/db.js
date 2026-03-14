@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let isConnected = false;
 
 async function connectDB() {
-  if (isConnected) return;
+  if (isConnected && mongoose.connection.readyState === 1) return;
 
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -13,8 +13,10 @@ async function connectDB() {
 
   try {
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
+      bufferCommands: false,
+      maxPoolSize: 10,
     });
     isConnected = true;
     console.log('✅  MongoDB connected:', mongoose.connection.host);
@@ -24,17 +26,12 @@ async function connectDB() {
       isConnected = false;
     });
     mongoose.connection.on('disconnected', () => {
-      console.warn('MongoDB disconnected — will retry');
       isConnected = false;
     });
   } catch (err) {
     console.error('❌  MongoDB connection failed:', err.message);
-    // In production keep retrying; in dev exit so you notice immediately
-    if (process.env.NODE_ENV === 'production') {
-      setTimeout(connectDB, 5000);
-    } else {
-      process.exit(1);
-    }
+    isConnected = false;
+    throw err;
   }
 }
 
