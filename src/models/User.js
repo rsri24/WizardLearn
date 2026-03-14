@@ -70,9 +70,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Indexes
-
-
 // Virtual: accuracy
 userSchema.virtual('overallAccuracy').get(function() {
   if (this.totalQuestionsAnswered === 0) return 0;
