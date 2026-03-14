@@ -4,6 +4,9 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { generateOtp, sendOtpEmail, sendWelcomeEmail } = require('../services/emailService');
 const { signToken, authenticate } = require('../middleware/auth');
+const LoginEvent = require('../models/LoginEvent');
+const { getLocationFromIp, parseUserAgent } = require('../services/locationService');
+const { notifyStreakMilestone } = require('../services/notificationService');
 
 const OTP_EXPIRES_MS = (parseInt(process.env.OTP_EXPIRES_MINUTES) || 10) * 60 * 1000;
 
