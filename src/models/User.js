@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-userSchema.index({ xp: -1 }); // for leaderboard
+
 
 // Virtual: accuracy
 userSchema.virtual('overallAccuracy').get(function() {
