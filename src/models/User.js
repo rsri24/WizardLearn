@@ -71,7 +71,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-userSchema.index({ email: 1 });
 userSchema.index({ xp: -1 }); // for leaderboard
 
 // Virtual: accuracy
