@@ -111,7 +111,29 @@ function startCronJobs() {
 }
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-connectDB().catch(err => console.error('MongoDB connection error:', err));
+// Ensure DB is connected before every request (critical for Vercel serverless)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(503).json({ success: false, message: 'Database unavailable. Please try again.' });
+  }
+});
+```
+
+Click **Commit changes**.
+
+---
+
+## Redeploy on Vercel
+
+**Vercel → Deployments → three dots → Redeploy**
+
+Wait 60 seconds then test:
+```
+https://wizard-learn.vercel.app/api/admin/dashboard?secret=wizardlearn_admin_2024
 
 if (process.env.NODE_ENV !== 'production') {
   startCronJobs();
